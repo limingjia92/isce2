@@ -156,6 +156,20 @@ GEOCODE_BOX = Application.Parameter(
     doc='Bounding box for geocoding - South, North, West, East in degrees'
                                     )
 
+## add by MJ,2025/10
+GEOCODE_METHOD = Application.Parameter(
+    'geocode_method',
+    public_name='geocode method',
+    default=None,
+    type=str,
+    mandatory=False,
+    doc=(
+        "Override interpolation method used in geocoding. "
+        "Valid values: 'sinc', 'bilinear', 'bicubic', 'nearest'. "
+        "If not provided, fall back to ISCE's per-product default."
+    )
+)
+
 REGION_OF_INTEREST = Application.Parameter(
         'roi',
         public_name = 'region of interest',
@@ -649,6 +663,7 @@ class TopsInSAR(Application):
                       DO_UNWRAP,
                       USE_HIGH_RESOLUTION_DEM_ONLY,
                       GEOCODE_BOX,
+                      GEOCODE_METHOD,
                       PICKLE_DUMPER_DIR,
                       PICKLE_LOAD_DIR,
                       REGION_OF_INTEREST,
