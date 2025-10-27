@@ -121,9 +121,15 @@ def runGeocode(self, prodlist, unwrapflag, bbox, is_offset_mode=False):
         objGeo.lookSide = -1 #S1A is currently right looking only
 
         #create the instance of the input image and the appropriate
-        #geocode method
-        inImage,method = ge.create(prod)
-        objGeo.method = method
+        #geocode method, MJ, 2025/10
+        inImage, default_method = ge.create(prod)
+        user_method = getattr(self, 'geocode_method', None)
+        if user_method:
+            # 用户在 tops.xml 里显式指定了插值核
+            objGeo.method = user_method
+        else:
+            # 否则就沿用 ISCE 默认为该产品挑的方式
+            objGeo.method = default_method
 
         objGeo.slantRangePixelSpacing = dr
         objGeo.prf = 1.0 / dtaz
@@ -143,7 +149,7 @@ def runGeocode(self, prodlist, unwrapflag, bbox, is_offset_mode=False):
         objGeo.wireInputPort(name='planet', object=planet)
         objGeo.wireInputPort(name='tobegeocoded', object=inImage)
 
-        objGeo.geocode()
+        objGeo.geocode(method=objGeo.method) ## MJ,2025/10
 
         catalog.addItem('Geocoding: ', inImage.filename, 'geocode')
         catalog.addItem('Output file: ', inImage.filename + '.geo', 'geocode')
